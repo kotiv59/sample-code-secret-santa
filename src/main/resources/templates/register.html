@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head th:replace="~{fragments :: head('Регистрация')}"><meta charset="UTF-8"><link rel="stylesheet" href="../static/css/style.css"></head>
+<body>
+<header th:replace="~{fragments :: header}"></header>
+
+<main class="container narrow">
+    <h1>Регистрация</h1>
+
+    <div th:unless="${open}" class="panel">
+        <p class="alert alert-error">Регистрация закрыта.</p>
+        <p th:unless="${drawDone}">Не успели? Напишите организатору:
+            <b th:text="${santa.organizerName}">Илья</b>,
+            <a th:href="'mailto:' + ${santa.organizerEmail}" th:text="${santa.organizerEmail}">mail</a>
+            <th:block th:if="${santa.organizerContact}">
+                или <b th:text="${santa.organizerContact}">Telegram</b></th:block></p>
+        <a class="btn" th:href="@{/}">На главную</a>
+    </div>
+
+    <form th:if="${open}" class="panel" th:action="@{/register}" th:object="${form}" method="post" novalidate>
+        <p class="muted">Регистрация открыта до <b th:text="${deadline}">20 декабря 2026, 23:59</b></p>
+        <p class="alert alert-error" th:if="${error}" th:text="${error}">Ошибка</p>
+        <th:block th:replace="~{fragments :: participantFields}"></th:block>
+        <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+    </form>
+</main>
+</body>
+</html>

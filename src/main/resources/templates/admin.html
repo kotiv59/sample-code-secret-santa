@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head th:replace="~{fragments :: head('Организатор')}"><meta charset="UTF-8"><link rel="stylesheet" href="../static/css/style.css"></head>
+<body>
+<header th:replace="~{fragments :: header}"></header>
+
+<main class="container">
+    <div class="row-between">
+        <h1>Панель организатора</h1>
+        <form th:action="@{/logout}" method="post"><button class="btn" type="submit">Выйти</button></form>
+    </div>
+
+    <p class="alert alert-ok" th:if="${message}" th:text="${message}">Готово</p>
+    <p class="alert alert-error" th:if="${error}" th:text="${error}">Ошибка</p>
+
+    <p class="muted">
+        Дедлайн регистрации: <b th:text="${deadline}">20 декабря 2026, 23:59</b>
+        <span th:if="${deadlinePassed}"> — прошёл</span>
+    </p>
+
+    <!-- Жеребьёвка -->
+    <section class="panel">
+        <h2>Жеребьёвка</h2>
+        <th:block th:unless="${drawDone}">
+            <p>Участников: <b th:text="${participants.size()}">0</b>. Каждому придёт письмо, кому он дарит подарок.</p>
+            <form th:action="@{/admin/draw}" method="post"
+                  onsubmit="return confirm('Провести жеребьёвку и разослать письма? Регистрация закроется.')">
+                <button type="submit" class="btn btn-primary" th:disabled="${participants.size() < 2}">
+                    Провести жеребьёвку и разослать письма
+                </button>
+            </form>
+        </th:block>
+
+        <th:block th:if="${drawDone}">
+            <!-- Сводка без получателей: организатор тоже участвует и не должен случайно увидеть пары -->
+            <p>Жеребьёвка проведена. Писем доставлено:
+                <b th:text="${sentCount} + ' из ' + ${pairs.size()}">3 из 3</b></p>
+            <th:block th:unless="${failed.isEmpty()}">
+                <p class="alert alert-error">Письмо не дошло:
+                    <span th:text="${#strings.listJoin(failed.![giver.fullName], ', ')}">Иванов Иван</span></p>
+            </th:block>
+
+            <p class="muted" th:unless="${reveal}">🙈 Список «кто кому дарит» скрыт — вы ведь тоже участвуете.</p>
+
+            <table class="table" th:if="${reveal}">
+                <thead><tr><th>Кто дарит</th><th></th><th>Кому дарит</th><th>Письмо</th></tr></thead>
+                <tbody>
+                <tr th:each="row : ${pairs}">
+                    <td th:text="${row.giver.fullName}">Иванов Иван</td>
+                    <td>→</td>
+                    <td th:text="${row.receiver.fullName}">Петров Пётр</td>
+                    <td th:text="${row.mailSent} ? '✅ отправлено' : '❌ не отправлено'">✅</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="actions">
+                <form th:action="@{/admin/resend}" method="post">
+                    <button type="submit" class="btn">Отправить неотправленные повторно</button>
+                </form>
+                <form th:unless="${reveal}" th:action="@{/admin}" method="get"
+                      onsubmit="return confirm('Показать все пары, включая вашу? Используйте только в экстренном случае.')">
+                    <input type="hidden" name="reveal" value="true">
+                    <button type="submit" class="btn btn-danger">Показать пары (экстренно)</button>
+                </form>
+                <a th:if="${reveal}" class="btn" th:href="@{/admin}">🙈 Скрыть пары</a>
+                <form th:action="@{/admin/reset}" method="post"
+                      onsubmit="return confirm('Сбросить жеребьёвку? Пары будут удалены, письма уже ушли.')">
+                    <button type="submit" class="btn btn-danger">Сбросить жеребьёвку</button>
+                </form>
+            </div>
+        </th:block>
+    </section>
+
+    <!-- Участники -->
+    <section class="panel">
+        <h2>Участники</h2>
+        <p class="muted" th:if="${participants.isEmpty()}">Пока никого нет.</p>
+        <table class="table" th:unless="${participants.isEmpty()}">
+            <thead><tr><th>ФИО</th><th>Email</th><th>Интересы</th><th></th></tr></thead>
+            <tbody>
+            <tr th:each="p : ${participants}">
+                <td th:text="${p.fullName}">Иванов Иван Иванович</td>
+                <td th:text="${p.email}">ivan@mail.ru</td>
+                <td th:text="${#strings.listJoin(p.interests, ', ')}">Машины</td>
+                <td>
+                    <form th:unless="${drawDone}" th:action="@{/admin/participants/{id}/delete(id=${p.id})}"
+                          method="post" onsubmit="return confirm('Удалить участника?')">
+                        <button type="submit" class="btn btn-small btn-danger">Удалить</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- Добавить вручную -->
+    <section class="panel" th:unless="${drawDone}">
+        <h2>Добавить участника</h2>
+        <p class="muted">Для тех, кто написал вам в личку. Работает и после дедлайна — до жеребьёвки.</p>
+        <form th:action="@{/admin/participants}" th:object="${form}" method="post" novalidate>
+            <th:block th:replace="~{fragments :: participantFields}"></th:block>
+            <button type="submit" class="btn btn-primary">Добавить</button>
+        </form>
+    </section>
+</main>
+</body>
+</html>

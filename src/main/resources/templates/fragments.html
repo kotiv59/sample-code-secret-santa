@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${title} + ' · Тайный Санта'">Тайный Санта</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header th:fragment="header" class="site-header">
+    <a class="logo" th:href="@{/}">🎅 Тайный Санта</a>
+    <nav>
+        <a th:href="@{/admin}">Организатор</a>
+    </nav>
+</header>
+
+<!-- Поля участника. Вставляется внутрь <form th:object="${form}">. -->
+<th:block th:fragment="participantFields">
+    <div class="grid-3">
+        <label class="field">
+            <span>Фамилия *</span>
+            <input type="text" th:field="*{lastName}" maxlength="100" autocomplete="family-name"
+                   th:classappend="${#fields.hasErrors('lastName')} ? 'invalid'">
+            <small class="err" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></small>
+        </label>
+        <label class="field">
+            <span>Имя *</span>
+            <input type="text" th:field="*{firstName}" maxlength="100" autocomplete="given-name"
+                   th:classappend="${#fields.hasErrors('firstName')} ? 'invalid'">
+            <small class="err" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></small>
+        </label>
+        <label class="field">
+            <span>Отчество</span>
+            <input type="text" th:field="*{middleName}" maxlength="100" autocomplete="additional-name"
+                   placeholder="или первая буква"
+                   th:classappend="${#fields.hasErrors('middleName')} ? 'invalid'">
+            <small class="err" th:if="${#fields.hasErrors('middleName')}" th:errors="*{middleName}"></small>
+        </label>
+    </div>
+
+    <label class="field">
+        <span>Email *</span>
+        <input type="email" th:field="*{email}" autocomplete="email" placeholder="name@mail.ru"
+               th:classappend="${#fields.hasErrors('email')} ? 'invalid'">
+        <small class="err" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></small>
+    </label>
+
+    <fieldset class="field">
+        <legend>Чем увлекаетесь? Выберите, что нравится</legend>
+        <div class="chips">
+            <label class="chip" th:each="interest : ${allInterests}">
+                <input type="checkbox" name="interests" th:value="${interest}"
+                       th:checked="${form.interests.contains(interest)}">
+                <span th:text="${interest}">Машины</span>
+            </label>
+        </div>
+    </fieldset>
+</th:block>
+
+</body>
+</html>

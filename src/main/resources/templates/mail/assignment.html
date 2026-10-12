@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head><meta charset="UTF-8"></head>
+<body style="font-family: Arial, sans-serif; color: #222; line-height: 1.5;">
+<p><span th:text="${greeting}">Дорогой Илья</span>,</p>
+<p>Поздравляем! <span th:text="${joined}">Ты стал частью</span> нашего волшебного обмена подарками — Секретного Санты! 🎁</p>
+
+<p><b>Краткая информация:</b></p>
+<ol>
+    <li>Тебе предстоит подарить подарок <b th:text="${receiverDative}">Олегу Мартынову</b>.
+        <span th:if="${!receiver.interests.isEmpty()}"><br>Увлечения:
+            <span th:text="${#strings.listJoin(receiver.interests, ', ')}">Машины, Кино</span></span></li>
+    <li>Бюджет подарка: <span th:text="${santa.budget}">1900</span> рублей.</li>
+    <li>Дата вручения: <span th:text="${#temporals.format(santa.giftDate, 'dd.MM.yyyy')
+            + (santa.giftTime != null ? ', ' + santa.giftTime : '')}">26.12.2026, первая половина дня</span>.</li>
+    <li>Место вручения: <span th:text="${santa.giftPlace}">Кухня</span>.</li>
+</ol>
+<p>Подарок положить под ёлку с именем и фамилией, кому подарок адресован.
+    Подарки лучше приносить в упаковке, которая скрывает содержимое.</p>
+
+<p>🎄 Пусть этот год принесёт тепло и радость! Спасибо, что участвуешь в создании настоящего праздника.</p>
+</body>
+</html>

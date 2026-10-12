@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head th:replace="~{fragments :: head('Главная')}"><meta charset="UTF-8"><link rel="stylesheet" href="../static/css/style.css"></head>
+<body>
+<header th:replace="~{fragments :: header}"></header>
+
+<main class="container">
+    <section class="hero">
+        <h1 th:text="${santa.eventName} + ' 🎄'">Operation Secret Santa 🎄</h1>
+        <p class="lead">Всем привет! Наступает праздничная пора, и уже традиционно мы проводим
+            «<span th:text="${santa.eventName}">Operation Secret Santa</span>».
+            Приглашаем всех желающих к радостному новогоднему обмену подарками!</p>
+
+        <div class="deadline" th:if="${open}">
+            <div class="deadline-label">Регистрация открыта до</div>
+            <div class="deadline-date" th:text="${deadline}">20 ноября 2026, 23:59</div>
+            <div class="deadline-left" th:if="${timeLeft}" th:text="${timeLeft}">осталось 39 дней</div>
+            <a class="btn btn-primary" th:href="@{/register}">Участвую!</a>
+        </div>
+
+        <div class="deadline closed" th:unless="${open}">
+            <div class="deadline-date" th:if="${drawDone}">Распределение состоялось — проверьте почту 📬</div>
+            <th:block th:unless="${drawDone}">
+                <div class="deadline-date">Регистрация закрыта</div>
+                <p>Не успели? Напишите организатору:
+                    <b th:text="${santa.organizerName}">Илья</b>,
+                    <a th:href="'mailto:' + ${santa.organizerEmail}" th:text="${santa.organizerEmail}">mail</a>
+                    <th:block th:if="${santa.organizerContact}">
+                        или <b th:text="${santa.organizerContact}">Telegram</b></th:block></p>
+            </th:block>
+        </div>
+    </section>
+
+    <div class="info-grid">
+        <section class="panel">
+            <h2>Как это работает?</h2>
+            <ul class="steps">
+                <li>Каждый участник случайным образом получит имя и фамилию человека,
+                    для которого нужно подготовить небольшой сюрприз.</li>
+                <li><b>Секретность — наше всё!</b> Старайтесь сохранить интригу до последнего момента.</li>
+                <li>Предельный бюджет на подарок: <b th:text="${santa.budget} + ' рублей'">1900 рублей</b>.</li>
+            </ul>
+        </section>
+
+        <section class="panel">
+            <h2>Что нужно сделать</h2>
+            <ul class="steps">
+                <li>Зарегистрируйтесь до <b th:text="${deadlineShort}">20.11.2026 (включительно)</b> — кнопка «Участвую!» выше.</li>
+                <li>Распределение состоится
+                    <b th:text="${#temporals.format(santa.drawDate, 'dd.MM.yyyy')}">21.11.2026</b>.
+                    Письмо придёт на электронную почту.</li>
+                <li>День вручения подарков:
+                    <th:block th:if="${santa.giftTime}" th:text="${santa.giftTime}">первая половина дня</th:block>
+                    <b th:text="${#temporals.format(santa.giftDate, 'dd.MM.yyyy')}">26.12.2026</b>
+                    (<span th:text="${santa.giftPlace}">Кухня</span>).</li>
+                <li>Подарки лучше приносить в упаковке, которая скрывает содержимое.</li>
+            </ul>
+        </section>
+    </div>
+
+    <p class="center muted">Давайте добавим немного праздничного настроения и радости друг другу!<br>
+        Формирует список <b th:text="${santa.organizerName}">Илья</b>, вопросы:
+        <a th:href="'mailto:' + ${santa.organizerEmail}" th:text="${santa.organizerEmail}">mail</a></p>
+
+    <section>
+        <h2>Участники <span class="count" th:text="${participants.size()}">0</span></h2>
+        <p class="muted" th:if="${participants.isEmpty()}">Пока никто не зарегистрировался — будьте первым!</p>
+        <ul class="cards">
+            <li class="card" th:each="p : ${participants}">
+                <div class="card-name" th:text="${p.fullName}">Иванов Иван Иванович</div>
+                <div class="chips small">
+                    <span class="tag" th:each="i : ${p.interests}" th:text="${i}">Машины</span>
+                </div>
+            </li>
+        </ul>
+    </section>
+</main>
+</body>
+</html>

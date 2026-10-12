@@ -1,0 +1,32 @@
+santa:
+  event-name: "Operation Secret Santa"
+  registration-deadline: 2026-12-20T23:59
+  draw-date: 2026-12-22
+  budget: 1900
+  gift-date: 2026-12-26
+  gift-time: "первая половина дня"
+  gift-place: "Кухня"
+  organizer-name: "Илья"
+  organizer-email: organizer@example.com
+  organizer-contact: "Telegram @organizer"
+  interests: [Машины, Компьютеры, Кухня, Готовка]
+  admin:
+    username: admin
+    password: secret
+  mail:
+    enabled: false
+    from: santa@localhost
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:santa;DB_CLOSE_DELAY=-1
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    open-in-view: false
+  mail:
+    host: localhost
+    port: 3025
+    properties:
+      mail.smtp.connectiontimeout: 2000
+      mail.smtp.timeout: 2000

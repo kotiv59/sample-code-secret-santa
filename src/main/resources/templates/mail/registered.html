@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head><meta charset="UTF-8"></head>
+<body style="font-family: Arial, sans-serif; color: #222; line-height: 1.5;">
+<p><span th:text="${greeting}">Дорогой Илья</span>,</p>
+<p>Ты в списке участников «<span th:text="${santa.eventName}">Operation Secret Santa</span>»! 🎄</p>
+<ul>
+    <li>Распределение состоится <b th:text="${#temporals.format(santa.drawDate, 'dd.MM.yyyy')}">21.11.2026</b> —
+        письмо с именем того, кому ты готовишь сюрприз, придёт на эту почту.</li>
+    <li>Предельный бюджет на подарок: <b th:text="${santa.budget}">1900</b> рублей.</li>
+    <li>День вручения подарков: <span th:if="${santa.giftTime}" th:text="${santa.giftTime} + ' '">первая половина дня </span><b
+            th:text="${#temporals.format(santa.giftDate, 'dd.MM.yyyy')}">26.12.2026</b>
+        (<span th:text="${santa.giftPlace}">Кухня</span>).</li>
+</ul>
+<p>Секретность — наше всё! Старайся сохранить интригу до последнего момента 🤫</p>
+<p>Вопросы — <span th:text="${santa.organizerName}">Илья</span>,
+    <a th:href="'mailto:' + ${santa.organizerEmail}" th:text="${santa.organizerEmail}">ikotov@snm-code.ru</a></p>
+</body>
+</html>

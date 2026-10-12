@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head th:replace="~{fragments :: head('Готово')}"><meta charset="UTF-8"><link rel="stylesheet" href="../static/css/style.css"></head>
+<body>
+<header th:replace="~{fragments :: header}"></header>
+
+<main class="container narrow">
+    <div class="panel center">
+        <div class="big-emoji">🎁</div>
+        <h1>Вы в игре!</h1>
+        <p th:if="${email}">Письмо с подтверждением отправлено на <b th:text="${email}">name@mail.ru</b>.</p>
+        <p>Распределение состоится
+            <b th:text="${#temporals.format(santa.drawDate, 'dd.MM.yyyy')}">21.11.2026</b> —
+            придёт письмо с именем того, кому вы готовите сюрприз.
+            Бюджет — до <b th:text="${santa.budget}">1900</b> рублей.</p>
+        <a class="btn btn-primary" th:href="@{/}">К списку участников</a>
+    </div>
+</main>
+</body>
+</html>

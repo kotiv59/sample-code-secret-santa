@@ -1,0 +1,85 @@
+santa:
+  event-name: "Operation Secret Santa"
+  registration-deadline: 2026-11-20T23:59     # регистрация включительно до этого момента
+  draw-date: 2026-11-21                       # когда будет распределение (письма придут в этот день)
+  budget: 1900                                # предельный бюджет подарка, рублей
+  gift-date: 2026-12-18
+  gift-time: "первая половина дня"
+  gift-place: "Кухня"
+  organizer-name: "Илья"
+  organizer-email: ikotov@snm-code.ru
+  organizer-contact: "Telegram @RunawayWizard"
+  interests:
+    - Машины
+    - Компьютеры
+    - Кухня
+    - Готовка
+    - Книги
+    - Спорт
+    - Путешествия
+    - Настолки
+    - Музыка
+    - Кино
+    - Рукоделие
+    - Сад и цветы
+    - Гаджеты
+    - Видеоигры
+    - Сериалы
+    - Аниме
+    - Комиксы
+    - Театр
+    - Фотография
+    - Рисование
+    - Лего и конструкторы
+    - Пазлы и головоломки
+    - Кофе и чай
+    - Сладости
+    - Походы и туризм
+    - Рыбалка
+    - Велосипед
+    - Бег и фитнес
+    - Йога
+    - Футбол
+    - Хоккей
+    - Танцы
+    - Животные
+    - Дача
+    - Инструменты и ремонт
+    - Уют и свечи
+    - Косметика и уход
+    - Мода и аксессуары
+    - Наука
+    - История
+    - Иностранные языки
+  admin:
+    username: admin
+    password: ${SANTA_ADMIN_PASSWORD:admin}
+  mail:
+    # false — письма не отправляются, а пишутся в лог
+    enabled: ${SANTA_MAIL_ENABLED:false}
+    from: ${SANTA_MAIL_USER:santa@localhost}
+
+server:
+  # 8080 и 8081 на этой машине заняты другими программами
+  port: ${SERVER_PORT:18080}
+
+spring:
+  datasource:
+    url: jdbc:h2:file:./data/santa
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+  mail:
+    host: smtp.mail.ru
+    port: 465
+    username: ${SANTA_MAIL_USER:}
+    # пароль для внешних приложений Mail.ru, а не основной пароль ящика
+    password: ${SANTA_MAIL_PASSWORD:}
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.ssl.enable: true
+      mail.smtp.connectiontimeout: 10000
+      mail.smtp.timeout: 10000
