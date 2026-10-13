@@ -16,6 +16,6 @@
 <p>Вопросы — <span th:text="${santa.organizerName}">Илья</span>,
     <a th:href="'mailto:' + ${santa.organizerEmail}" th:text="${santa.organizerEmail}">ikotov@snm-code.ru</a></p>
 
-<p th:replace="~{mail/logo :: logo}"></p>
+<th:block th:replace="~{mail/footer :: footer}"></th:block>
 </body>
 </html>

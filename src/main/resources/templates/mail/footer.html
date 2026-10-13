@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<body>
+<!-- Концовка всех писем: логотип и подпись.
+     logoSrc — cid:вложение в письме или URL в предпросмотре -->
+<th:block th:fragment="footer">
+<p><img th:src="${logoSrc}" src="../../static/img/operation-secret-santa.png"
+        alt="Operation Secret Santa" width="300" style="display: block; max-width: 100%; height: auto;"></p>
+
+<p>--------------------<br>
+    С уважением,<br><br>
+    Коллектив Сономы.</p>
+</th:block>
+</body>
+</html>

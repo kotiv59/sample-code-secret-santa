@@ -79,7 +79,6 @@ class GameServiceIT {
         MimeMessage letter = find(greenMail.getReceivedMessages(), "all@example.com", "Operation Secret Santa");
         String html = htmlWithLogo(letter);
         assertTrue(html.contains("Всем привет"), html);
-        assertTrue(html.indexOf("cid:logo") < html.indexOf("С уважением"), "логотип должен быть перед подписью");
         assertTrue(html.contains("<b>от 1000 до 1500 рублей</b>"), html);
         assertTrue(html.contains("http://santa.example.com"), html);
         assertTrue(html.contains("<b>20.12.2026</b> (включительно)"), html);
@@ -105,7 +104,7 @@ class GameServiceIT {
         assertEquals("Нужно минимум 2 участника", e.getMessage());
     }
 
-    /** Проверяет, что логотип вложен и на него ссылается HTML, и возвращает HTML письма */
+    /** Проверяет концовку письма (вложенный логотип, затем подпись) и возвращает HTML письма */
     private static String htmlWithLogo(MimeMessage letter) throws MessagingException, IOException {
         String raw = GreenMailUtil.getWholeMessage(letter);
         assertTrue(raw.contains("Content-ID: <logo>"), "картинка не вложена");
@@ -114,6 +113,8 @@ class GameServiceIT {
         MimeMultipart related = (MimeMultipart) ((MimeMultipart) letter.getContent()).getBodyPart(0).getContent();
         String html = (String) related.getBodyPart(0).getContent();
         assertTrue(html.contains("src=\"cid:logo\""), html);
+        assertTrue(html.contains("Коллектив Сономы"), html);
+        assertTrue(html.indexOf("cid:logo") < html.indexOf("С уважением"), "логотип должен быть перед подписью");
         return html;
     }
 
