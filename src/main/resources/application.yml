@@ -2,13 +2,15 @@ santa:
   event-name: "Operation Secret Santa"
   registration-deadline: 2026-11-20T23:59     # регистрация включительно до этого момента
   draw-date: 2026-11-21                       # когда будет распределение (письма придут в этот день)
-  budget: 1900                                # предельный бюджет подарка, рублей
+  minimal-budget: 1000                        # минимальный бюджет подарка, рублей
+  max-budget: 1900                            # максимальный бюджет подарка, рублей
   gift-date: 2026-12-18
   gift-time: "первая половина дня"
   gift-place: "Кухня"
   organizer-name: "Илья"
   organizer-email: ikotov@snm-code.ru
   organizer-contact: "Telegram @RunawayWizard"
+  site-url: ${SANTA_SITE_URL:}                  # ссылка на регистрацию в письме-приглашении
   interests:
     - Машины
     - Компьютеры
@@ -57,13 +59,19 @@ santa:
   mail:
     # false — письма не отправляются, а пишутся в лог
     enabled: ${SANTA_MAIL_ENABLED:false}
-    from: ${SANTA_MAIL_USER:santa@localhost}
+    # адрес отправителя; может быть синонимом ящика SANTA_MAIL_USER (например santa@snm-code.ru)
+    from: ${SANTA_MAIL_FROM:${SANTA_MAIL_USER:santa@localhost}}
+    # общая рассылка, на которую уходит приглашение из админки (например all@snm-code.ru)
+    invite-to: ${SANTA_MAIL_INVITE_TO:}
 
 server:
   # 8080 и 8081 на этой машине заняты другими программами
   port: ${SERVER_PORT:18080}
 
 spring:
+  config:
+    # локальные секреты (SANTA_MAIL_PASSWORD и т.п.) в .env рядом с проектом; файл не коммитится
+    import: optional:file:.env[.properties]
   datasource:
     url: jdbc:h2:file:./data/santa
     username: sa

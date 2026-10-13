@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head><meta charset="UTF-8"></head>
+<body style="font-family: Arial, sans-serif; color: #222; line-height: 1.5;">
+<p>Всем привет,</p>
+<p>Наступает праздничная пора и уже традиционно проводим мероприятие
+    «<span th:text="${santa.eventName}">Operation Secret Santa</span>».<br>
+    Приглашаем всех желающих к радостному и новогоднему обмену подарками! 🎄</p>
+
+<p><b>Как это работает?</b></p>
+<ul>
+    <li>Каждый участник случайным образом получит ФИ человека, для которого нужно подготовить небольшой сюрприз.</li>
+    <li>Секретность — наше всё! Старайтесь сохранить интригу до последнего момента.</li>
+    <li>Бюджет на подарок: <b th:text="${santa.budgetText()}">от 1000 до 1500 рублей</b>.</li>
+</ul>
+
+<p><b>Что нужно сделать:</b></p>
+<ul>
+    <li th:if="${!#strings.isEmpty(santa.siteUrl)}">Зарегистрируйтесь на сайте
+        <a th:href="${santa.siteUrl}" th:text="${santa.siteUrl}">http://santa.snm-code.ru</a> до
+        <b th:text="${#temporals.format(santa.registrationDeadline, 'dd.MM.yyyy')}">20.11.2026</b> (включительно).</li>
+    <li th:if="${#strings.isEmpty(santa.siteUrl)}">Отправьте письмо «Участвую» на
+        <a th:href="'mailto:' + ${santa.organizerEmail}" th:text="${santa.organizerEmail}">ikotov@snm-code.ru</a> до
+        <b th:text="${#temporals.format(santa.registrationDeadline, 'dd.MM.yyyy')}">20.11.2026</b> (включительно).</li>
+    <li>Распределение состоится <b th:text="${#temporals.format(santa.drawDate, 'dd.MM.yyyy')}">21.11.2026</b>.
+        Письмо придёт на электронную почту.</li>
+    <li>День вручения подарков: <span th:if="${santa.giftTime}" th:text="${santa.giftTime} + ' '">первая половина дня </span><b
+            th:text="${#temporals.format(santa.giftDate, 'dd.MM.yyyy')}">18.12.2026</b>
+        (<span th:text="${santa.giftPlace}">Кухня</span>).</li>
+    <li>Подарки лучше приносить в упаковке, которая скрывает содержимое.</li>
+</ul>
+
+<p>Давайте добавим немного праздничного настроения и радости друг другу!<br>
+    Вопросы — <span th:text="${santa.organizerName}">Илья</span>,
+    <a th:href="'mailto:' + ${santa.organizerEmail}" th:text="${santa.organizerEmail}">ikotov@snm-code.ru</a></p>
+
+<p th:replace="~{mail/logo :: logo}"></p>
+
+<p>--------------------<br>
+    С уважением,<br><br>
+    Коллектив Сономы.</p>
+</body>
+</html>

@@ -2,13 +2,15 @@ santa:
   event-name: "Operation Secret Santa"
   registration-deadline: 2026-12-20T23:59
   draw-date: 2026-12-22
-  budget: 1900
+  minimal-budget: 1000
+  max-budget: 1500
   gift-date: 2026-12-26
   gift-time: "первая половина дня"
   gift-place: "Кухня"
   organizer-name: "Илья"
   organizer-email: organizer@example.com
   organizer-contact: "Telegram @organizer"
+  site-url: http://santa.example.com
   interests: [Машины, Компьютеры, Кухня, Готовка]
   admin:
     username: admin
@@ -16,6 +18,7 @@ santa:
   mail:
     enabled: false
     from: santa@localhost
+    invite-to: all@example.com
 
 spring:
   datasource:

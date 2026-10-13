@@ -55,7 +55,7 @@ class WebTest {
                 .andExpect(content().string(containsString("20 декабря 2026, 23:59")))
                 .andExpect(content().string(containsString("осталось 19 дней")))
                 .andExpect(content().string(containsString("20.12.2026 (включительно)")))
-                .andExpect(content().string(containsString("1900 рублей")))
+                .andExpect(content().string(containsString("от 1000 до 1500 рублей")))
                 .andExpect(content().string(containsString("22.12.2026")))
                 .andExpect(content().string(containsString("Иванов Иван Иванович")))
                 .andExpect(content().string(containsString("Машины")))
@@ -145,6 +145,30 @@ class WebTest {
         mvc.perform(get("/admin").param("reveal", "true").with(user("admin").roles("ADMIN")))
                 .andExpect(content().string(containsString("Кому дарит")))
                 .andExpect(content().string(containsString("Скрыть пары")));
+    }
+
+    @Test
+    void adminCanPreviewAndSendInvitation() throws Exception {
+        mvc.perform(get("/admin").with(user("admin").roles("ADMIN")))
+                .andExpect(content().string(containsString("Отправить приглашение")))
+                .andExpect(content().string(containsString("all@example.com")));
+
+        mvc.perform(get("/admin/invitation").with(user("admin").roles("ADMIN")))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Всем привет")))
+                .andExpect(content().string(containsString("http://santa.example.com")))
+                .andExpect(content().string(containsString("src=\"/img/operation-secret-santa.png\"")));
+
+        mvc.perform(get("/img/operation-secret-santa.png")).andExpect(status().isOk());
+
+        mvc.perform(post("/admin/invitation").with(csrf()).with(user("admin").roles("ADMIN")))
+                .andExpect(redirectedUrl("/admin"))
+                .andExpect(flash().attribute("message", "Приглашение отправлено на all@example.com"));
+    }
+
+    @Test
+    void invitationIsAdminOnly() throws Exception {
+        mvc.perform(get("/admin/invitation")).andExpect(redirectedUrlPattern("**/login"));
     }
 
     @Test

@@ -11,20 +11,27 @@ public record SantaProperties(
         String eventName,
         LocalDateTime registrationDeadline,
         LocalDate drawDate,
-        int budget,
+        int minimalBudget,
+        int maxBudget,
         LocalDate giftDate,
         String giftTime,
         String giftPlace,
         String organizerName,
         String organizerEmail,
         String organizerContact,
+        String siteUrl,
         List<String> interests,
         Admin admin,
         Mail mail) {
 
+    /** «от 1000 до 1500 рублей» — одна формулировка бюджета для сайта и писем */
+    public String budgetText() {
+        return "от " + minimalBudget + " до " + maxBudget + " рублей";
+    }
+
     public record Admin(String username, String password) {
     }
 
-    public record Mail(boolean enabled, String from) {
+    public record Mail(boolean enabled, String from, String inviteTo) {
     }
 }

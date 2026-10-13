@@ -10,7 +10,7 @@
     <li>Тебе предстоит подарить подарок <b th:text="${receiverDative}">Олегу Мартынову</b>.
         <span th:if="${!receiver.interests.isEmpty()}"><br>Увлечения:
             <span th:text="${#strings.listJoin(receiver.interests, ', ')}">Машины, Кино</span></span></li>
-    <li>Бюджет подарка: <span th:text="${santa.budget}">1900</span> рублей.</li>
+    <li>Бюджет подарка: <span th:text="${santa.budgetText()}">от 1000 до 1500 рублей</span>.</li>
     <li>Дата вручения: <span th:text="${#temporals.format(santa.giftDate, 'dd.MM.yyyy')
             + (santa.giftTime != null ? ', ' + santa.giftTime : '')}">26.12.2026, первая половина дня</span>.</li>
     <li>Место вручения: <span th:text="${santa.giftPlace}">Кухня</span>.</li>
@@ -19,5 +19,7 @@
     Подарки лучше приносить в упаковке, которая скрывает содержимое.</p>
 
 <p>🎄 Пусть этот год принесёт тепло и радость! Спасибо, что участвуешь в создании настоящего праздника.</p>
+
+<p th:replace="~{mail/logo :: logo}"></p>
 </body>
 </html>

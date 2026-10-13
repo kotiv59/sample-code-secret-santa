@@ -12,7 +12,7 @@
         <p>Распределение состоится
             <b th:text="${#temporals.format(santa.drawDate, 'dd.MM.yyyy')}">21.11.2026</b> —
             придёт письмо с именем того, кому вы готовите сюрприз.
-            Бюджет — до <b th:text="${santa.budget}">1900</b> рублей.</p>
+            Бюджет — <b th:text="${santa.budgetText()}">от 1000 до 1500 рублей</b>.</p>
         <a class="btn btn-primary" th:href="@{/}">К списку участников</a>
     </div>
 </main>

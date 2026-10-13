@@ -1,9 +1,11 @@
 package org.example.service;
 
 import com.icegreen.greenmail.junit5.GreenMailExtension;
+import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMultipart;
 import org.example.TestSupport;
 import org.example.entity.RowParticipant;
 import org.example.repository.ParticipantRepository;
@@ -37,6 +39,8 @@ class GameServiceIT {
     RowParticipantRepository rows;
     @Autowired
     NameFormatter names;
+    @Autowired
+    MailService mail;
 
     @BeforeEach
     void clean() {
@@ -58,14 +62,28 @@ class GameServiceIT {
         for (RowParticipant row : pairs) {
             assertTrue(row.isMailSent());
             MimeMessage letter = find(all, row.getGiver().getEmail(), "Operation Secret Santa: кому ты даришь подарок");
-            String html = (String) letter.getContent();
+            String html = htmlWithLogo(letter);
             assertTrue(html.contains("Тебе предстоит подарить подарок <b>" + names.dative(row.getReceiver()) + "</b>"), html);
             assertTrue(html.contains("Дорогой Иван"), html);
             assertTrue(html.contains("Ты стал частью"), html);
-            assertTrue(html.contains("1900"), html);
+            assertTrue(html.contains("от 1000 до 1500 рублей"), html);
             assertTrue(html.contains("<span>26.12.2026, первая половина дня</span>"), html);
             assertTrue(html.contains("Кухня"), html);
         }
+    }
+
+    @Test
+    void invitationGoesToMailingList() throws Exception {
+        assertTrue(mail.sendInvitation());
+
+        MimeMessage letter = find(greenMail.getReceivedMessages(), "all@example.com", "Operation Secret Santa");
+        String html = htmlWithLogo(letter);
+        assertTrue(html.contains("Всем привет"), html);
+        assertTrue(html.indexOf("cid:logo") < html.indexOf("С уважением"), "логотип должен быть перед подписью");
+        assertTrue(html.contains("<b>от 1000 до 1500 рублей</b>"), html);
+        assertTrue(html.contains("http://santa.example.com"), html);
+        assertTrue(html.contains("<b>20.12.2026</b> (включительно)"), html);
+        assertTrue(html.contains("<b>22.12.2026</b>"), html);
     }
 
     @Test
@@ -85,6 +103,18 @@ class GameServiceIT {
 
         var e = assertThrows(GameException.class, () -> game.runDraw());
         assertEquals("Нужно минимум 2 участника", e.getMessage());
+    }
+
+    /** Проверяет, что логотип вложен и на него ссылается HTML, и возвращает HTML письма */
+    private static String htmlWithLogo(MimeMessage letter) throws MessagingException, IOException {
+        String raw = GreenMailUtil.getWholeMessage(letter);
+        assertTrue(raw.contains("Content-ID: <logo>"), "картинка не вложена");
+        assertTrue(raw.contains("image/png"), "картинка не вложена");
+
+        MimeMultipart related = (MimeMultipart) ((MimeMultipart) letter.getContent()).getBodyPart(0).getContent();
+        String html = (String) related.getBodyPart(0).getContent();
+        assertTrue(html.contains("src=\"cid:logo\""), html);
+        return html;
     }
 
     private static MimeMessage find(MimeMessage[] all, String to, String subject)

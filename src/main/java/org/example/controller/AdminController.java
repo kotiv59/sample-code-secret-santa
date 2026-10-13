@@ -1,12 +1,15 @@
 package org.example.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.example.config.SantaProperties;
 import org.example.dto.ParticipantForm;
 import org.example.repository.ParticipantRepository;
 import org.example.service.GameException;
 import org.example.service.GameService;
+import org.example.service.MailService;
 import org.example.service.RegistrationService;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,13 +23,15 @@ public class AdminController {
     private final RegistrationService registration;
     private final GameService game;
     private final SantaProperties properties;
+    private final MailService mail;
 
     public AdminController(ParticipantRepository participants, RegistrationService registration,
-                           GameService game, SantaProperties properties) {
+                           GameService game, SantaProperties properties, MailService mail) {
         this.participants = participants;
         this.registration = registration;
         this.game = game;
         this.properties = properties;
+        this.mail = mail;
     }
 
     /** @param reveal показать пары «кто кому дарит» — только по явному запросу организатора */
@@ -75,6 +80,22 @@ public class AdminController {
         return run(redirect, () -> "Повторно отправлено писем: " + game.resendFailed());
     }
 
+    @PostMapping("/invitation")
+    public String sendInvitation(RedirectAttributes redirect) {
+        return run(redirect, () -> {
+            if (!mail.sendInvitation()) {
+                throw new GameException("Не удалось отправить приглашение — подробности в логе");
+            }
+            return "Приглашение отправлено на " + properties.mail().inviteTo();
+        });
+    }
+
+    @GetMapping(value = "/invitation", produces = MediaType.TEXT_HTML_VALUE)
+    @ResponseBody
+    public String previewInvitation(HttpServletRequest request) {
+        return mail.renderInvitation(request.getContextPath() + "/img/operation-secret-santa.png");
+    }
+
     @PostMapping("/reset")
     public String reset(RedirectAttributes redirect) {
         return run(redirect, () -> {
@@ -94,6 +115,7 @@ public class AdminController {
         model.addAttribute("deadlinePassed", registration.isDeadlinePassed());
         model.addAttribute("deadline", HomeController.DEADLINE_FORMAT.format(properties.registrationDeadline()));
         model.addAttribute("allInterests", properties.interests());
+        model.addAttribute("inviteTo", properties.mail().inviteTo());
         return "admin";
     }
 
